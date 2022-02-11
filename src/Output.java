@@ -8,16 +8,16 @@ public class Output {
     /**
      * outputClassesToCSV: note les informations reliées aux classes d'un projet Java
      * dans un fichier .csv
-     * @param data une liste contenant des arrays de données pertinentes au classes
+     * @param data une liste contenant des arrays de données pertinentes aux classes
      * @throws FileNotFoundException si le fichier de sortie n'existe pas
      */
     public void outputClassesToCSV(List<String[]> data) throws FileNotFoundException {
 
-        File out = new File("classes.csv");
+        File out = new File("PARTIE4/classes.csv");
         PrintWriter writer = new PrintWriter(out);
 
         // Représente la première ligne du fichier .csv
-        String tags = "chemin,class,classe_LOC,classe_CLOC,classe_DC,WMC,classe_BC\n";
+        String tags = "chemin,classe,classe_LOC,classe_CLOC,classe_DC,WMC,classe_BC\n";
 
         write(data, writer, tags);
 
@@ -26,12 +26,12 @@ public class Output {
     /**
      * outputPackagesToCSV: note les informations reliées aux paquets d'un projet Java
      * dans un fichier .csv
-     * @param data une liste contenant des arrays de données pertinentes au classes
+     * @param data une liste contenant des arrays de données pertinentes aux classes
      * @throws FileNotFoundException si le fichier de sortie n'existe pas
      */
     public void outputPackagesToCSV(List<String[]> data) throws FileNotFoundException {
 
-        File out = new File("paquets.csv");
+        File out = new File("PARTIE4/paquets.csv");
         PrintWriter writer = new PrintWriter(out);
 
         // Représente la première ligne du fichier .csv
@@ -43,7 +43,7 @@ public class Output {
     /**
      * write: procède à l'inscription des données dans un fichier .csv
      * @param data les données qu'on souhaite ajouter au .csv
-     * @param writer objet permettant d'ajouter des données au  .csv
+     * @param writer objet permettant d'ajouter des données au .csv
      * @param tags ligne indiquant le type de donnée de chaque colonne
      */
     private void write(List<String[]> data, PrintWriter writer, String tags) {

@@ -11,8 +11,8 @@ public class Parser {
      * ses sous-dossiers.
      * @param path le chemin du dossier de départ.
      * @param classList une liste où on entrepose les informations pour chaque classe.
-     * @param packageList une liste où on entrepose les informations pour chaque paquet
-     * @throws FileNotFoundException si le path mêne à un dossier qui n'existe pas.
+     * @param packageList une liste où on entrepose les informations pour chaque paquet.
+     * @throws FileNotFoundException si le path mène à un dossier qui n'existe pas.
      */
     public void parseCode(String path, List<String[]> classList, List<String[]> packageList)
             throws FileNotFoundException {
@@ -31,40 +31,38 @@ public class Parser {
             for(File file : files) {
 
                 String name = file.getName();
-                String extension = name.substring(name.lastIndexOf(".") + 1, name.length());
+                String extension = name.substring(name.lastIndexOf(".") + 1);
 
                 // Si le fichier est un dossier, on exécute parseCode récursivement
                 if(file.isDirectory()) parseCode(String.valueOf(file), classList, packageList);
-                else if (extension.equals("java")) {
+                else if(extension.equals("java")) {
                     // On parse la classe et on ajoute les résultats
                     int[] results = parseClass(file);
 
-                    String class_LOC = String.valueOf(results[0]);
-                    String class_CLOC = String.valueOf(results[1]);
-                    String class_DC = String.valueOf(1.0 * results[0] / results[1]);
+                    int class_LOC = results[0];
+                    int class_CLOC = results[1];
+                    double class_DC = 1.0 * results[1] / results[0];
 
                     // On parse à nouveau pour déterminer la complexité cyclomatique
-                    int result = parseClassCycle(file);
-
-                    String class_WMC = String.valueOf(result);
-                    String class_BC = String.valueOf(result == 0 ? 0 : 1.0 * results[0] / results[1] / result);
+                    int class_WMC = parseClassCycle(file);
+                    double class_BC = class_WMC == 0 ? 0 : class_DC / class_WMC;
 
                     // On ajoute les informations de la classe à classList
                     classList.add(new String[] {
                                     String.valueOf(file),
                                     file.getName(),
-                                    class_LOC,
-                                    class_CLOC,
-                                    class_DC,
-                                    class_WMC,
-                                    class_BC
+                                    String.valueOf(class_LOC),
+                                    String.valueOf(class_CLOC),
+                                    String.valueOf(class_DC),
+                                    String.valueOf(class_WMC),
+                                    String.valueOf(class_BC)
                     }
                     );
 
                     // On ajoute le résultat aux valeurs correspondant au paquet (dossier)
-                    package_LOC += results[0];
-                    package_CLOC += results[1];
-                    package_WCP += result;
+                    package_LOC += class_LOC;
+                    package_CLOC += class_CLOC;
+                    package_WCP += class_WMC;
                 }
             }
 
@@ -108,9 +106,9 @@ public class Parser {
         while(scanner.hasNext()) {
             line = scanner.nextLine();
 
-            // Si une ligne commence avec /*, on peut supposer que celle-ci
-            // ainsi que toutes les autres qui suivent sont des lignes de commentaire
-            // jusqu'à ce qu'on arrive à */
+            /* Si une ligne commence avec /*, on peut supposer que celle-ci,
+               ainsi que toutes les autres qui suivent,
+               sont des lignes de commentaires jusqu'à ce qu'on arrive à */
             if(line.startsWith("/*")) {
                 while(!line.contains("*/")) {
                     if(!line.isEmpty()) {
@@ -120,14 +118,14 @@ public class Parser {
                     line = scanner.nextLine();
                 }
             }
-            else if(line.startsWith("//")) {    // Si une ligne commence avec //, c'est une ligne de commentaire
+            else if(line.startsWith("//")) { // Si une ligne commence avec //, c'est une ligne de commentaire
                 class_CLOC++;
                 class_LOC++;
             }
             else if(!line.isBlank()) { // Si la ligne ne commence pas avec // ou /*...
                 class_LOC++;
 
-                // ... il se peut qu'il y ait tout de même un commentaire après le code.
+                // ...il se peut qu'il y ait tout de même un commentaire après le code.
                 if(line.contains("//") || line.contains("/*")) class_CLOC++;
             }
         }
@@ -146,10 +144,10 @@ public class Parser {
     private int parseClassCycle(File file) throws FileNotFoundException {
         int class_WMC = 0;
 
-        // Un ensemble d'expressions qui sont indicatives d'une structure de contrôle
-        // (À noter qu'on comprend "return", "public void", et "private void"; même si une méthode
-        // ne contient pas d'expressions de type "if" etc., ceci nous permet de compter le nombre de
-        // méthodes dans une classe.
+        /* Un ensemble d'expressions qui sont indicatives d'une structure de contrôle.
+           À noter qu'on comprend "return", "public void" et "private void"; même si une méthode
+           ne contient pas d'expressions de type "if" etc., ceci nous permet de compter le nombre de
+           méthodes dans une classe. */
         String[] expressions = { "if(", "if (", "else if(", "else if (", "case ", "public void ", "private void ",
                                  "for(", "for (", " && ", " || ", " ? ", "catch(", "catch (", "return " };
 
