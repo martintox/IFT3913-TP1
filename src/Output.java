@@ -13,7 +13,7 @@ public class Output {
      */
     public void outputClassesToCSV(List<String[]> data) throws FileNotFoundException {
 
-        File out = new File("PARTIE4/classes.csv");
+        File out = new File("classes.csv");
         PrintWriter writer = new PrintWriter(out);
 
         // Représente la première ligne du fichier .csv
@@ -31,7 +31,7 @@ public class Output {
      */
     public void outputPackagesToCSV(List<String[]> data) throws FileNotFoundException {
 
-        File out = new File("PARTIE4/paquets.csv");
+        File out = new File("paquets.csv");
         PrintWriter writer = new PrintWriter(out);
 
         // Représente la première ligne du fichier .csv
